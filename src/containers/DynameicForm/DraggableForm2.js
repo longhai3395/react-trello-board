@@ -16,7 +16,7 @@ const formSource = {
     console.log(props, monitor, component);
     const { id, type, text} = props;
     const { clientWidth, clientHeight } = findDOMNode(component);
-
+    props.removeForm(id);
     return { id, type, text, clientWidth, clientHeight };
   },
   endDrag(props, monitor) {
@@ -55,6 +55,7 @@ export default class DraggableForm extends Component {
   static propTypes = {
     connectDragSource: PropTypes.func.isRequired,
     connectDragPreview: PropTypes.func.isRequired,
+    removeForm: PropTypes.func.isRequired,
     isDragging: PropTypes.bool.isRequired,
     id: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,

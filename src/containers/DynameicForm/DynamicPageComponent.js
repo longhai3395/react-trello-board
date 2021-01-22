@@ -30,6 +30,7 @@ export default class DynamicPageComponent extends Component {
     connectDropTarget: PropTypes.func.isRequired,
     formCanDrop: PropTypes.func.isRequired,
     formDrop: PropTypes.func.isRequired,
+    removeForm: PropTypes.func.isRequired,
     children: PropTypes.object,
   }
 
@@ -39,7 +40,7 @@ export default class DynamicPageComponent extends Component {
 
   render() {
     console.log(this.props);
-    const { connectDropTarget } = this.props;
+    const { connectDropTarget, removeForm } = this.props;
     if(this.props.children != null) {
       const {id, type, text} = this.props.children;
       return connectDropTarget(
@@ -48,7 +49,9 @@ export default class DynamicPageComponent extends Component {
             key={id}
             id={id}
             type={type}
-            text={text} />
+            text={text}
+            removeForm={removeForm}
+             />
         </div>
       );
     } else {

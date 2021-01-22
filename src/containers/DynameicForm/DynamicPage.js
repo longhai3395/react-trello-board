@@ -24,6 +24,14 @@ export default class DynamicPage extends Component {
     this.setState({forms}, () => {console.log(this.state.forms)});
   }
 
+  removeForm = (id) => {
+    const { forms } = this.state;
+    const form = forms.filter(f => f.id === id)[0];
+    console.log(id, form);
+    form.children = null;
+    this.setState({forms}, () => {console.log(this.state.forms)});
+  }
+
   render() {
     let formsList = [];
     this.state.forms.forEach(element => {
@@ -33,6 +41,7 @@ export default class DynamicPage extends Component {
         children={children} 
         formCanDrop={this.formCanDrop} 
         formDrop={this.formDrop}
+        removeForm={this.removeForm}
       />);
     });
     return (
