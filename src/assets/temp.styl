@@ -11,7 +11,7 @@ body
 	color #4d4d4d
 	font-weight normal
 	padding 0 10px
-	background-color rgb(0, 121, 191)
+	background-color rgb(255, 255, 255)
 	position relative
 	height 100%
 	padding 0
@@ -31,6 +31,85 @@ main
 	height 100%
 	white-space nowrap
 	clearfix()
+.form-components, .form-components-placeholder, .form-components-placeholder:hover
+	width 270px
+	display inline-block
+	height 100%
+	overflow hidden
+	min-height 100px
+	background-color #e2e4e6
+	box-shadow 1px 1px 1px rgba(0,0,0,.5)
+	border-radius 3px
+	padding 10px
+	margin 10px
+	vertical-align top
+	.form-head
+		position relative
+		padding 5px 8px
+		margin-bottom 10px
+		clearfix()
+		.form-name
+			font-weight bold
+			white-space normal
+			width 100%	
+.form-items
+	width 250px
+	overflow-y auto
+	height 100%
+	padding-bottom 20px
+	.placeholder, .placeholder:hover
+		height 161px
+		background-color rgba(208,208,208,1)
+.form-page, .form-page-placeholder, .form-page-placeholder:hover
+	width 500px
+	display inline-block
+	height 100%
+	overflow hidden
+	min-height 100px
+	background-color #e2e4e6
+	box-shadow 1px 1px 1px rgba(0,0,0,.5)
+	border-radius 3px
+	padding 10px
+	margin 10px
+	vertical-align top
+	.form-head
+		position relative
+		padding 5px 8px
+		margin-bottom 10px
+		clearfix()
+		.form-name
+			font-weight bold
+			white-space normal
+			width 100%
+.form-container 
+	background-color #ffffff
+	box-shadow 1px 1px 1px rgba(0,0,0,.5)
+	width 250px
+	height 60px
+	vertical-align top
+	margin 10px
+	&:hover
+		background #f7f7f7
+.form-component 
+	cursor pointer
+	background-color #ffffff
+	box-shadow 1px 1px 1px rgba(0,0,0,.5)
+	width 250px
+	height 40px
+	vertical-align top
+	margin 10px
+	&:hover
+		background #f7f7f7
+.form 
+	cursor pointer
+	background-color #ffffff
+	box-shadow 1px 1px 1px rgba(0,0,0,.5)
+	width 250px
+	height 40px
+	vertical-align top
+	margin 10px
+	&:hover
+		background #f7f7f7
 .desk, .desk-placeholder, .desk-placeholder:hover
 	width 270px
 	display inline-block

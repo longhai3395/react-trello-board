@@ -3,8 +3,7 @@ import { findDOMNode } from 'react-dom';
 import { DragSource } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
-import Card from './Card';
-
+import Form from './Form';
 
 function getStyles(isDragging) {
   return {
@@ -12,33 +11,29 @@ function getStyles(isDragging) {
   };
 }
 
-const cardSource = {
+const formSource = {
   beginDrag(props, monitor, component) {
-    // dispatch to redux store that drag is started
-    const { item, x, y } = props;
-    const { id, title } = item;
+    console.log(props, monitor, component);
+    const { id, type, text} = props;
     const { clientWidth, clientHeight } = findDOMNode(component);
 
-    return { id, title, item, x, y, clientWidth, clientHeight };
+    return { id, type, text, clientWidth, clientHeight };
   },
   endDrag(props, monitor) {
+    console.log(props, monitor);
     document.getElementById(monitor.getItem().id).style.display = 'block';
-    props.stopScrolling();
   },
   isDragging(props, monitor) {
-    const isDragging = props.item && props.item.id === monitor.getItem().id;
+    const isDragging = props.id && props.id === monitor.getItem().id;
     return isDragging;
   }
 };
 
-// options: 4rd param to DragSource https://gaearon.github.io/react-dnd/docs-drag-source.html
 const OPTIONS = {
   arePropsEqual: function arePropsEqual(props, otherProps) {
     let isEqual = true;
-    if (props.item.id === otherProps.item.id &&
-        props.x === otherProps.x &&
-        props.y === otherProps.y
-       ) {
+    if (props.id === otherProps.id &&
+        props.type === otherProps.type) {
       isEqual = true;
     } else {
       isEqual = false;
@@ -55,16 +50,15 @@ function collectDragSource(connectDragSource, monitor) {
   };
 }
 
-@DragSource('card', cardSource, collectDragSource, OPTIONS)
-export default class CardComponent extends Component {
+@DragSource('form', formSource, collectDragSource, OPTIONS)
+export default class DraggableForm extends Component {
   static propTypes = {
-    item: PropTypes.object,
     connectDragSource: PropTypes.func.isRequired,
     connectDragPreview: PropTypes.func.isRequired,
     isDragging: PropTypes.bool.isRequired,
-    x: PropTypes.number.isRequired,
-    y: PropTypes.number,
-    stopScrolling: PropTypes.func
+    id: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired
   }
 
   componentDidMount() {
@@ -74,11 +68,13 @@ export default class CardComponent extends Component {
   }
 
   render() {
-    const { isDragging, connectDragSource, item } = this.props;
+    const {id, type, text, isDragging, connectDragSource } = this.props;
 
     return connectDragSource(
       <div>
-        <Card style={getStyles(isDragging)} item={item} />
+        <Form id={id} type={type} 
+          text={text} 
+          style={getStyles(isDragging)} />
       </div>
     );
   }

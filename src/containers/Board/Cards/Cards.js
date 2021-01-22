@@ -3,27 +3,18 @@ import { DropTarget } from 'react-dnd';
 import { findDOMNode } from 'react-dom';
 
 import Card from './DraggableCard';
+import { CARD_HEIGHT, CARD_MARGIN, OFFSET_HEIGHT } from '../../../constants.js';
 
 
 function getPlaceholderIndex(y, scrollY) {
+  // shift placeholder if y position more than card height / 2
+  const yPos = y - OFFSET_HEIGHT + scrollY;
   let placeholderIndex;
-
-  // t0d0: change cardHeight from const
-  const cardHeight = 161; // height of a single card(excluding marginBottom/paddingBottom)
-  const cardMargin = 10; // height of a marginBottom+paddingBottom
-
-  // t0d0: change offsetHeight from const
-  const offsetHeight = 84; // height offset from the top of the page
-
-  // we start counting from the top of dragTarget
-  const yPos = y - offsetHeight + scrollY;
-
-  if (yPos < cardHeight / 2) {
+  if (yPos < CARD_HEIGHT / 2) {
     placeholderIndex = -1; // place at the start
   } else {
-    placeholderIndex = Math.floor((yPos - cardHeight / 2) / (cardHeight + cardMargin));
+    placeholderIndex = Math.floor((yPos - CARD_HEIGHT / 2) / (CARD_HEIGHT + CARD_MARGIN));
   }
-
   return placeholderIndex;
 }
 
@@ -34,9 +25,15 @@ const specs = {
     const lastX = monitor.getItem().x;
     const lastY = monitor.getItem().y;
     const nextX = props.x;
-    const nextY = (lastX === nextX) ? placeholderIndex : placeholderIndex + 1;
+    let nextY = placeholderIndex;
 
-    if ((lastX === nextX && lastY === nextY) || nextY === -1) {
+    if (lastY > nextY) { // move top
+      nextY += 1;
+    } else if (lastX !== nextX) { // insert into another list
+      nextY += 1;
+    }
+
+    if (lastX === nextX && lastY === nextY) { // if position equel
       return;
     }
 
@@ -48,7 +45,6 @@ const specs = {
       monitor.getClientOffset().y,
       findDOMNode(component).scrollTop
     );
-    console.log(placeholderIndex);
 
     // horizontal scroll
     if (!props.isScrolling) {
@@ -64,39 +60,6 @@ const specs = {
         props.stopScrolling();
       }
     }
-
-    // vertical scroll
-    // if (monitor.isOver() && monitor.getClientOffset().y < 188) {
-    //   if (!isScrollingTop) {
-    //     component.setState({ isScrollingTop: true });
-    //     const scrollingSpeed = 5;
-
-    //     setTimeout(function scrollUp() {
-    //       findDOMNode(component).scrollTop -= scrollingSpeed;
-    //       if (component.state.isScrollingTop) {
-    //         setTimeout(scrollUp, 10);
-    //       }
-    //     }, 10);
-    //   }
-    // } else {
-    //   component.setState({ isScrollingTop: false });
-    // }
-
-    // if (monitor.isOver() && monitor.getClientOffset().y > 633) {
-    //   if (!isScrollingBottom) {
-    //     component.setState({ isScrollingBottom: true });
-    //     const scrollingSpeed = 5;
-
-    //     setTimeout(function scrollDown() {
-    //       findDOMNode(component).scrollTop += scrollingSpeed;
-    //       if (component.state.isScrollingBottom) {
-    //         setTimeout(scrollDown, 10);
-    //       }
-    //     }, 10);
-    //   }
-    // } else {
-    //   component.setState({ isScrollingBottom: false });
-    // }
 
     // IMPORTANT!
     // HACK! Since there is an open bug in react-dnd, making it impossible
@@ -141,31 +104,20 @@ export default class Cards extends Component {
     };
   }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   console.log('this and next props');
-  //   console.log(this.props);
-  //   console.log(nextProps);
-  //   console.log('this and next state');
-  //   console.log(this.state);
-  //   console.log(nextState);
-  //   if (nextProps.canDrop === false && nextState.placeholderIndex === undefined) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
-
   render() {
     const { connectDropTarget, x, cards, isOver, canDrop } = this.props;
     const { placeholderIndex } = this.state;
 
-    let toPlaceFirst;
-    let toPlaceLast;
+    let isPlaceHold = false;
     let cardList = [];
     cards.forEach((item, i) => {
-      toPlaceFirst = false;
-      if (isOver && canDrop && i === 0 && placeholderIndex === -1) {
-        toPlaceFirst = true;
-        cardList.push(<div key="placeholder" className="item placeholder" />);
+      if (isOver && canDrop) {
+        isPlaceHold = false;
+        if (i === 0 && placeholderIndex === -1) {
+          cardList.push(<div key="placeholder" className="item placeholder" />);
+        } else if (placeholderIndex > i) {
+          isPlaceHold = true;
+        }
       }
       if (item !== undefined) {
         cardList.push(
@@ -176,19 +128,13 @@ export default class Cards extends Component {
           />
         );
       }
-
-      if (isOver && canDrop) {
-        toPlaceLast = false;
-        if (!toPlaceFirst && placeholderIndex > i) {
-          toPlaceLast = true;
-        } else if (!toPlaceFirst && !toPlaceLast && placeholderIndex === i) {
-          cardList.push(<div key="placeholder" className="item placeholder" />);
-        }
+      if (isOver && canDrop && placeholderIndex === i) {
+        cardList.push(<div key="placeholder" className="item placeholder" />);
       }
     });
 
     // if placeholder index is greater than array.length, display placeholder as last
-    if (toPlaceLast) {
+    if (isPlaceHold) {
       cardList.push(<div key="placeholder" className="item placeholder" />);
     }
 
